@@ -440,5 +440,18 @@ int32_t _sd_init_hndl(st_sdhndl_t *p_hndl, uint32_t mode, uint32_t voltage)
  End of function _sd_init_hndl
  *****************************************************************************/
 
+#if 1
+void SD_OUTP(st_sdhndl_t *h, uint32_t offset, uint32_t data) {
+    volatile uint32_t tmp = h->reg_base;
+    tmp += offset;
+    ((volatile u_sd_reg_t *)tmp)->longlong = (uint64_t)data;
+}
+
+uint64_t SD_INP(st_sdhndl_t *h, uint32_t offset) {
+    volatile uint32_t tmp = h->reg_base;
+    tmp += offset;
+    return ((volatile u_sd_reg_t *)tmp)->longlong;
+}
+#endif
 
 /* End of File */

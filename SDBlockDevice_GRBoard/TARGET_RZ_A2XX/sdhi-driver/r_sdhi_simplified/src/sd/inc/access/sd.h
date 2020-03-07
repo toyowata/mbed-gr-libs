@@ -424,44 +424,6 @@ Macro definitions
 
 #define SCLKDIVEN_LOOP_COUNT        (10000)                     /* check SCLKDIVEN bit loop count */
 
-/* ==== macro functions ==== */
-#define SD_GET_HNDLS(a)            (gp_sdhandle[(a)])
-
-/* 64bit access */
-#define SD_OUTP(h,offset,data)      (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->longlong = (data))
-#define SD_INP(h,offset)            (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->longlong)
-
-/* 32bit access */
-#define SD_OUTPH(h,offset,data)     (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.h_ = (data))
-#define SD_OUTPL(h,offset,data)     (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.l_ = (data))
-#define SD_INPH(h,offset)           (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.h_)
-#define SD_INPL(h,offset)           (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.l_)
-
-/* 16bit access */
-#define SD_OUTPHH(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hh_ = (data))
-#define SD_OUTPHL(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hl_ = (data))
-#define SD_OUTPLH(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.lh_ = (data))
-#define SD_OUTPLL(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.ll_ = (data))
-#define SD_INPHH(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hh_)
-#define SD_INPHL(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hl_)
-#define SD_INPLH(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.lh_)
-#define SD_INPLL(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.ll_)
-
-/* ==== command type ==== */
-/* ---- eSD commands ---- */
-#define CMD43                       (0x052B)                    /* SELECT_PARTITIONS */
-#define CMD44                       (0x0C2C)                    /* MANAGE_PARTITIONS */
-#define CMD45                       (0x1C2D)                    /* QUERY_PARTITIONS */
-
-/* ==== SD Card detect ==== */
-#define SD_CD_DETECT                (0x0001u)                   /* card detection */
-
-/* === SDR104 READ/WRITE CMD === */
-#define SDR104_READ_CMD             (0x7c00u)
-
-/* === SD Set Clock === */
-#define SD_CLK_CTRL_SCLKEN          (0x0100uL)
-
 /* ==== SD Driver work buffer (allocated by File system) ==== */
 typedef struct __sdhndl                 /* SD handle */
 {
@@ -531,6 +493,49 @@ typedef struct __sdhndl                 /* SD handle */
     uint32_t    buff_size;                              /* work buffer size */
     int32_t     sup_if_mode;                            /* supported bus width (1bit:0 4bits:1) */
 } st_sdhndl_t;
+
+/* ==== macro functions ==== */
+#define SD_GET_HNDLS(a)            (gp_sdhandle[(a)])
+
+/* 64bit access */
+#if 0
+#define SD_OUTP(h,offset,data)      (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->longlong = (data))
+#define SD_INP(h,offset)            (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->longlong)
+#else
+void SD_OUTP(st_sdhndl_t *h, uint32_t offset, uint32_t data);
+uint64_t SD_INP(st_sdhndl_t *h, uint32_t offset);
+#endif
+
+/* 32bit access */
+#define SD_OUTPH(h,offset,data)     (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.h_ = (data))
+#define SD_OUTPL(h,offset,data)     (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.l_ = (data))
+#define SD_INPH(h,offset)           (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.h_)
+#define SD_INPL(h,offset)           (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_long_t.l_)
+
+/* 16bit access */
+#define SD_OUTPHH(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hh_ = (data))
+#define SD_OUTPHL(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hl_ = (data))
+#define SD_OUTPLH(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.lh_ = (data))
+#define SD_OUTPLL(h,offset,data)    (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.ll_ = (data))
+#define SD_INPHH(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hh_)
+#define SD_INPHL(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.hl_)
+#define SD_INPLH(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.lh_)
+#define SD_INPLL(h,offset)          (((volatile u_sd_reg_t *)((h)->reg_base+(offset)))->st_word_t.ll_)
+
+/* ==== command type ==== */
+/* ---- eSD commands ---- */
+#define CMD43                       (0x052B)                    /* SELECT_PARTITIONS */
+#define CMD44                       (0x0C2C)                    /* MANAGE_PARTITIONS */
+#define CMD45                       (0x1C2D)                    /* QUERY_PARTITIONS */
+
+/* ==== SD Card detect ==== */
+#define SD_CD_DETECT                (0x0001u)                   /* card detection */
+
+/* === SDR104 READ/WRITE CMD === */
+#define SDR104_READ_CMD             (0x7c00u)
+
+/* === SD Set Clock === */
+#define SD_CLK_CTRL_SCLKEN          (0x0100uL)
 
 extern st_sdhndl_t *gp_sdhandle[NUM_PORT];
 
